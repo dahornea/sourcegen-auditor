@@ -13,13 +13,19 @@ $scenarioFixture = (Resolve-Path -LiteralPath $FixturePath).Path
 $scenarioRuntime = (Resolve-Path -LiteralPath $SystemRuntimePath).Path
 $scenarioRepository = (Resolve-Path -LiteralPath $RepositoryRoot).Path
 $scenarioRoot = Join-Path $scenarioRepository 'tests/scenarios'
-$approvedFixtureSha256 = '0f22ceda1bb8d75701a962c325b68f9dc0fd202018bea4e0f170a48b88da3fa1'
+$stableFixtureInformationalVersion = '1.0.0'
+$approvedFixtureSha256 = 'fbd57d6aad6771e1035f264f4b5870c0efab278a29ac0dbdffc82a522c433164'
 if (-not $scenarioFixture.StartsWith($scenarioRepository, [StringComparison]::OrdinalIgnoreCase)) {
     throw 'Fixture path is outside the repository.'
 }
 
 function Get-LowerHash([string]$Path) {
     return (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant()
+}
+
+$fixtureInformationalVersion = [Diagnostics.FileVersionInfo]::GetVersionInfo($scenarioFixture).ProductVersion
+if (-not [StringComparer]::Ordinal.Equals($fixtureInformationalVersion, $stableFixtureInformationalVersion)) {
+    throw "The fixture AssemblyInformationalVersion must be exactly $stableFixtureInformationalVersion without a source revision suffix; found '$fixtureInformationalVersion'."
 }
 
 if ((Get-LowerHash $scenarioFixture) -ne $approvedFixtureSha256) {

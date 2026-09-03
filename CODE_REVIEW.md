@@ -81,3 +81,7 @@ The configured read-only reviewer inspected the complete implementation, governi
 - Package: `SourceGenAuditor.Tool.0.1.0.nupkg`, SHA-256 `4d0b646759fe29cdfb04a4819beec1e93cb9b05f0c59c72544189fbd35a8565e`, 5,750,858 bytes, required README/Roslyn notice present, repository/commit metadata absent.
 - Installed-tool smoke: version 0.1.0, relevant scenario `PASS` 6/6, irrelevant scenario `PASS` 6/6, uninstall removed the shim.
 - Repository state: `.codex/` restored, `.codex-phase1-tmp/` absent, exactly four projects, no CI workflow, and `git diff --check` passed with only Git's existing LF/CRLF warning for `README.md`.
+
+## P1-R1 fixture reproducibility correction
+
+The first fresh post-commit build exposed that the pre-commit fixture SHA-256 `0f22ceda1bb8d75701a962c325b68f9dc0fd202018bea4e0f170a48b88da3fa1` included the then-current Git revision in `AssemblyInformationalVersion`. P1-R1 applies the SDK's fixture-scoped `IncludeSourceRevisionInInformationalVersion=false`, requires the stable informational version `1.0.0` during scenario preparation, and supersedes that pre-commit artifact with SHA-256 `fbd57d6aad6771e1035f264f4b5870c0efab278a29ac0dbdffc82a522c433164`. Canonicalization, F5 vectors, generator behavior, public assembly identity, report semantics, and product scope are unchanged.

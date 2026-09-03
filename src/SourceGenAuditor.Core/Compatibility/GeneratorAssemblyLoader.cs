@@ -21,7 +21,7 @@ public static class GeneratorAssemblyLoader
     private const string CSharpName = "Microsoft.CodeAnalysis.CSharp";
     private const string ApprovedFixtureAssemblyName = "SourceGenAuditor.Fixtures";
     private const string ApprovedFixtureType = "SourceGenAuditor.Fixtures.ConfigurableIncrementalGenerator";
-    private const string ApprovedFixtureSha256 = "0f22ceda1bb8d75701a962c325b68f9dc0fd202018bea4e0f170a48b88da3fa1";
+    private const string ApprovedFixtureSha256 = "fbd57d6aad6771e1035f264f4b5870c0efab278a29ac0dbdffc82a522c433164";
     private static readonly HashSet<string> TrustedPlatformAssemblyNames = LoadTrustedPlatformAssemblyNames();
 
     public static LoadedGenerator Load(GeneratorTarget target)
