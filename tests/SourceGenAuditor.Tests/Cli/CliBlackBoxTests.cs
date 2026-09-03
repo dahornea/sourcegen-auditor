@@ -18,9 +18,48 @@ public sealed class CliBlackBoxTests
         Assert.Equal("0.1.0", version.Stdout.Trim());
         Assert.Equal(string.Empty, version.Stderr);
 
+        ProcessResult help = await RunAsync("--help");
+        Assert.Equal(0, help.ExitCode);
+        Assert.Contains("sourcegen-auditor audit <scenario.json> [options]", help.Stdout, StringComparison.Ordinal);
+        Assert.Contains("sourcegen-auditor audit --help", help.Stdout, StringComparison.Ordinal);
+        Assert.Equal(string.Empty, help.Stderr);
+
         ProcessResult invalid = await RunAsync();
         Assert.Equal(64, invalid.ExitCode);
         Assert.Contains("Usage:", invalid.Stderr, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AuditHelpAliasesDescribeArgumentsDefaultsResultsAndExits()
+    {
+        ProcessResult longHelp = await RunAsync("audit", "--help");
+        ProcessResult shortHelp = await RunAsync("audit", "-h");
+
+        Assert.Equal(0, longHelp.ExitCode);
+        Assert.Equal(longHelp.Stdout, shortHelp.Stdout);
+        Assert.Equal(string.Empty, longHelp.Stderr);
+        Assert.Equal(string.Empty, shortHelp.Stderr);
+        Assert.Contains("Manifest declaring the generator, inputs, mutation, and expectations.", longHelp.Stdout, StringComparison.Ordinal);
+        Assert.Contains("Report format: console or json. Default: console.", longHelp.Stdout, StringComparison.Ordinal);
+        Assert.Contains("Timeout for each worker checkpoint, 1-600. Default: 30.", longHelp.Stdout, StringComparison.Ordinal);
+        Assert.Contains("Atomically write the report to a file instead of stdout.", longHelp.Stdout, StringComparison.Ordinal);
+        Assert.Contains("PASS=all required assertions passed", longHelp.Stdout, StringComparison.Ordinal);
+        Assert.Contains("Exit codes: 0 PASS, 1 FAIL, 2 UNKNOWN, 3 ERROR, 64 invalid input, 130 canceled.", longHelp.Stdout, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task InvalidOptionValuesNameAcceptedValuesOrRange()
+    {
+        ProcessResult timeout = await RunAsync("audit", "scenario.json", "--timeout", "601");
+        ProcessResult format = await RunAsync("audit", "scenario.json", "--format", "yaml");
+        ProcessResult unknown = await RunAsync("audit", "scenario.json", "--verbose", "true");
+
+        Assert.Equal(64, timeout.ExitCode);
+        Assert.Contains("Invalid value '601' for --timeout. Accepted range: 1-600 seconds.", timeout.Stderr, StringComparison.Ordinal);
+        Assert.Equal(64, format.ExitCode);
+        Assert.Contains("Invalid value 'yaml' for --format. Accepted values: console, json.", format.Stderr, StringComparison.Ordinal);
+        Assert.Equal(64, unknown.ExitCode);
+        Assert.Contains("Unknown option '--verbose'. Accepted options: --format, --output, --timeout.", unknown.Stderr, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -46,6 +85,10 @@ public sealed class CliBlackBoxTests
         Assert.Contains("source-set-sha256=", console.Stdout, StringComparison.Ordinal);
         Assert.Contains("tracked availability=Available", console.Stdout, StringComparison.Ordinal);
         Assert.Contains("worker-stdout total=", console.Stdout, StringComparison.Ordinal);
+        Assert.True(
+            console.Stdout.IndexOf("Verdict: PASS", StringComparison.Ordinal) <
+            console.Stdout.IndexOf("[run:coldA] completion=Complete", StringComparison.Ordinal),
+            "The console summary must precede detailed run evidence.");
         foreach (JsonElement assertion in root.GetProperty("assertions").EnumerateArray())
         {
             Assert.Contains($"[PASS] {assertion.GetProperty("id").GetString()}:", console.Stdout, StringComparison.Ordinal);

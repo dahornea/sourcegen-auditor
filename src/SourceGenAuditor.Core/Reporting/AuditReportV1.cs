@@ -343,6 +343,21 @@ public static class ReportRenderer
         StringBuilder builder = new();
         builder.AppendLine($"SourceGen Auditor {report.Tool.Version}");
         builder.AppendLine("Observed behavior under one declared controlled scenario.");
+        builder.AppendLine($"Verdict: {result.Verdict}");
+        builder.AppendLine($"Partial evidence: {result.PartialEvidence.ToString().ToLowerInvariant()}");
+        if (result.Failure is not null)
+        {
+            builder.AppendLine($"Failure: {result.Failure.Kind} active={result.Failure.ActiveCheckpointId ?? "null"} message={result.Failure.Message}");
+        }
+
+        builder.AppendLine("Assertions:");
+        foreach (AssertionResult assertion in result.Assertions)
+        {
+            builder.AppendLine($"[{assertion.Result}] {assertion.Id}: {assertion.Message} ({assertion.ReasonCode}) evidence=[{string.Join(',', assertion.EvidenceIds)}]");
+        }
+
+        builder.AppendLine();
+        builder.AppendLine("Detailed evidence:");
         builder.AppendLine($"Scenario: {report.Scenario.Id} manifest-sha256={report.Scenario.ManifestHash}");
         builder.AppendLine($"Generator: {report.Scenario.Generator.AssemblyToken} type={report.Scenario.Generator.TypeName}");
         builder.AppendLine($"Mutation: {report.Scenario.Mutation.Id} relevance={report.Scenario.Mutation.Relevance} target={report.Scenario.Mutation.TargetLogicalPath}");
@@ -378,23 +393,11 @@ public static class ReportRenderer
             AppendLog(builder, "stderr", run.WorkerStderr);
         }
 
+        builder.AppendLine("Observations:");
         foreach (ObservedFact observation in result.Observations)
         {
             builder.AppendLine($"[OBSERVED] {observation.Id}: {observation.Value} evidence=[{string.Join(',', observation.EvidenceIds)}]");
         }
-
-        foreach (AssertionResult assertion in result.Assertions)
-        {
-            builder.AppendLine($"[{assertion.Result}] {assertion.Id}: {assertion.Message} ({assertion.ReasonCode}) evidence=[{string.Join(',', assertion.EvidenceIds)}]");
-        }
-
-        builder.AppendLine($"Partial evidence: {result.PartialEvidence.ToString().ToLowerInvariant()}");
-        if (result.Failure is not null)
-        {
-            builder.AppendLine($"Failure: {result.Failure.Kind} active={result.Failure.ActiveCheckpointId ?? "null"} message={result.Failure.Message}");
-        }
-
-        builder.AppendLine($"Verdict: {result.Verdict}");
         return builder.ToString();
     }
 

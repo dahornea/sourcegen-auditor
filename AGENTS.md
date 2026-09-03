@@ -2,7 +2,7 @@
 
 ## Current phase
 
-Phase 1 was owner-approved on 2026-09-03, including Architecture Amendments F5-01 and F5-02. Read `PRODUCT.md`, `ARCHITECTURE.md`, `PLAN.md`, `docs/scenarios.md`, and ADRs 0001-0004 before changing scope. Stop on every documented F1-F7 falsification condition and request a new Architecture Gate rather than improvising.
+Phase 1 was completed at commit `ef11d3167b51ed1fb87514115c93102b43c9234c`, including Architecture Amendments F5-01 and F5-02. The current work is publication polish over those capabilities; Phase 2 is not approved. Read `PRODUCT.md`, `ARCHITECTURE.md`, `PLAN.md`, `docs/scenarios.md`, and ADRs 0001-0004 before changing scope. The historical F1-F7 stop conditions remain authoritative for any future re-execution or architectural change.
 
 ## Ownership and evidence
 
@@ -19,7 +19,7 @@ Use at most two concurrent subagents so the primary plus subagents never exceeds
 
 ## Scope discipline
 
-Phase 1 is limited to C#, one selected `IIncrementalGenerator`, one narrow controlled scenario, one generator fixture, the pinned Roslyn host and explicit admission/evidence policy, an MTP v2 test executable, and one installable `dotnet tool` package with console plus JSON results. Preserve the non-goals and stop on every falsification condition in `PRODUCT.md` and `ARCHITECTURE.md`; do not improvise a different architecture.
+The completed Phase 1 is limited to C#, one selected `IIncrementalGenerator`, one narrow controlled scenario, one generator fixture, the pinned Roslyn host and explicit admission/evidence policy, an MTP v2 test executable, and one installable `dotnet tool` package with console plus JSON results. Preserve the non-goals and do not expand the bounded product claim or improvise a different architecture.
 
 ## Verification
 

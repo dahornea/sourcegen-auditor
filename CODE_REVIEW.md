@@ -1,10 +1,10 @@
-# Phase 0 owner review
+# Architecture and Phase 1 review record
 
-Status: **Reopened Architecture Gate reviewed; READY for owner decision**
+Current status: **Phase 1 completed and reviewed; READY for bounded publication polish**
 
-An independent read-only reviewer inspected the completed Phase 0 diff against the owner's request, official evidence, and internal contracts. The review was bounded to contradictions, unsupported claims, missing failure states, unnecessary scope, and verifier defects. No files were edited by the reviewer.
+This document preserves the historical Phase 0, reopened Architecture Gate, amendment, and completed Phase 1 reviews. Each reviewer was read-only and edited no files. Earlier owner-gate language records decisions already made; the current completed implementation review appears below.
 
-## Findings and disposition
+## Historical Phase 0 findings and disposition
 
 | Priority | Finding | Disposition |
 | --- | --- | --- |
@@ -27,7 +27,7 @@ These checks describe the earlier 22-file draft and are retained only as history
 
 The shell checks were run from Git Bash at the repository root. Phase 0 verification checks repository shape and specification markers only; it is not generator or product acceptance. A fresh 23-file record is required below before approval is requested.
 
-## Reopened Architecture Gate review
+## Historical reopened Architecture Gate review
 
 The renewed review must verify all seven owner blockers as one coherent specification: MTP v2 only; lower-or-equal Roslyn admission without an unsupported compatibility promise; an installable local `dotnet tool`; locked source and diagnostic comparison contracts; a closed bounded worker protocol; measurable F1-F7 stop/re-gate criteria; and a public claim limited to observed behavior under one declared controlled scenario. It must also confirm that only one configurable generator fixture is proposed and that Phase 0 still contains no product code, project, fixture, package, test, or CI artifact.
 
@@ -35,7 +35,7 @@ The configured read-only reviewer initially returned `NOT READY` and identified 
 
 The final full re-review returned **READY — no concrete blockers remain**. It confirmed all seven owner blockers, the one-fixture limit, public/security claim boundaries, exact mapped allowlist, verifier syntax, diff whitespace, and independent recomputation of every published normative SHA-256 vector. The reviewer was read-only and edited no files.
 
-## Fresh reopened-gate verification
+## Historical reopened-gate verification
 
 Final checks run from the repository root on 2026-09-03 after restoring the unchanged `.codex` directory:
 
@@ -45,7 +45,7 @@ Final checks run from the repository root on 2026-09-03 after restoring the unch
 
 The first fresh execution found one stale verifier phrase left from the pre-reopen plan. Both verifier scripts were corrected to require `renewed explicit approval`, and every command above then passed. No Phase 1 product, project, fixture, package, executable test, or CI artifact was created or run.
 
-## F5-01 and F5-02 amendment review
+## Historical F5-01 and F5-02 amendment review
 
 The configured read-only reviewer examined the owner-approved diagnostic-canonicalization amendments after implementation. Its initial F5-02 verdict was **NOT READY** for two blockers: the binary model permitted invalid unmapped/mapped path-kind combinations, and no JSON/report projection proved the required mapped-state distinction. A focused pass also identified an inaccurate title/message-format sentence and the missing `LocationV1` `None` report variant.
 

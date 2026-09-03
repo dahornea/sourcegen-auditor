@@ -2,19 +2,19 @@
 
 ## Hypothesis
 
-SourceGen Auditor is a local-first .NET CLI that audits the observed behavior of one Roslyn incremental source generator under one declared controlled scenario.
+SourceGen Auditor audits a compiled Roslyn incremental source generator across a controlled A → B → A scenario. It combines exact generated-output comparison with Roslyn tracked-step reasons, exposing cases where output stayed equal but the pipeline still recomputed.
 
-**Tagline:** Prove your generator only regenerates what it should.
+**Tagline:** Audit what your incremental generator recomputes—and what Roslyn reuses.
 
-The word "prove" is bounded to recorded public Roslyn evidence under that one scenario and the observed execution environment. It is not a global proof of determinism, semantic correctness, purity, performance, optimal incremental caching, compatibility, or behavior in every compiler host.
+Every result describes observed behavior under one declared controlled scenario and is bounded to the selected generator, recorded public Roslyn evidence, and observed execution environment. It is not a global proof of determinism, semantic correctness, purity, performance, optimal incremental caching, compatibility, or behavior in every compiler host.
 
 ## User and problem
 
 The initial user is a source-generator author who can provide a compiled generator and a controlled input scenario. The tool should turn an `A -> B -> A` experiment into reproducible observations and explicit assertion outcomes without guessing whether the change should matter.
 
-## Phase 1 deliverable
+## Completed Phase 1 deliverable
 
-The approved first slice supports:
+The completed first slice supports:
 
 - C# on .NET 10;
 - one selected `IIncrementalGenerator` from a compiled DLL;
@@ -59,6 +59,6 @@ Every claim identifies its evidence. Incomplete evidence prevents `PASS`.
 - Cloud, SaaS, accounts, AI, or paid services
 - Execution of generators presented as malicious or untrusted
 
-## Success at the end of Phase 1
+## Phase 1 completion record
 
-A user can pack the tool, install it from the locally produced package source into an isolated tool path, invoke `sourcegen-auditor` against the single approved generator fixture, and receive the same domain verdict and evidence in console and JSON projections. Acceptance includes success, assertion failure, unknown evidence, invalid scenarios, load failures, generator exceptions, timeouts, crashes, cancellation, TRX generation, package installation, worker self-spawn, and uninstall. Phase 1 is not complete until the exact sequence in `PLAN.md` passes locally.
+Phase 1 completed after the exact sequence in `PLAN.md` passed locally. A user can pack the tool, install it from the locally produced package source into an isolated tool path, invoke `sourcegen-auditor` against the single approved generator fixture, and receive the same domain verdict and evidence in console and JSON projections. Acceptance covered success, assertion failure, unknown evidence, invalid scenarios, load failures, generator exceptions, timeouts, crashes, cancellation, TRX generation, package installation, worker self-spawn, and uninstall.

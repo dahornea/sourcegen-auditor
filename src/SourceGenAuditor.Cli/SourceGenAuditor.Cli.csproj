@@ -5,8 +5,11 @@
     <ToolCommandName>sourcegen-auditor</ToolCommandName>
     <PackageId>SourceGenAuditor.Tool</PackageId>
     <Version>0.1.0</Version>
+    <Title>SourceGen Auditor</Title>
     <Authors>SourceGen Auditor contributors</Authors>
-    <Description>Audits observed incremental source generator behavior under one declared controlled scenario.</Description>
+    <Description>Audits one compiled Roslyn incremental source generator's observed output and cache behavior under a declared controlled scenario.</Description>
+    <PackageProjectUrl>https://github.com/dahornea/sourcegen-auditor</PackageProjectUrl>
+    <PackageTags>dotnet;dotnet-tool;csharp;roslyn;source-generators;incremental-generator;developer-tools;testing</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>

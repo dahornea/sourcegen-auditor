@@ -1,8 +1,8 @@
 # Delivery plan
 
-## Gate state
+## Historical gate state and current status
 
-The Architecture Gate and amendments F5-01/F5-02 are approved. Phase 1 implementation is authorized and remains bounded by F1-F7 and the no-Phase-2 rule.
+The Architecture Gate and amendments F5-01/F5-02 are approved, and Phase 1 was completed at commit `ef11d3167b51ed1fb87514115c93102b43c9234c`. This plan remains the reproducible historical record of the implementation and acceptance sequence. Phase 2 is not approved.
 
 ## Locked project configuration
 
@@ -57,9 +57,9 @@ The CLI project locks:
 
 The deliverable is a framework-dependent installable .NET tool. NuGet.org publishing is deferred.
 
-## Exact Phase 1 implementation sequence
+## Historical exact Phase 1 implementation sequence
 
-The approved Phase 1 sequence is:
+The completed Phase 1 sequence was:
 
 1. Add the pinned `global.json`, solution, two production projects, one executable MTP v2 test project, one single-generator fixture project, central package versions, and lock files exactly as specified above.
 2. Run falsification gate F1: locked restore, build, MTP execution, positive test counts, and a passing named xUnit/MTP sentinel in the TRX. Stop and reopen the gate if it fails.

@@ -30,6 +30,12 @@ internal static class Program
             return 0;
         }
 
+        if (args.Length == 2 && args[0] == "audit" && args[1] is "--help" or "-h")
+        {
+            WriteAuditHelp();
+            return 0;
+        }
+
         CliOptions options;
         try
         {
@@ -148,7 +154,7 @@ internal static class Program
 
     private static CliOptions Parse(string[] args)
     {
-        if (args.Length < 2 || args[0] != "audit" || args[1].StartsWith("--", StringComparison.Ordinal))
+        if (args.Length < 2 || args[0] != "audit" || args[1].StartsWith("-", StringComparison.Ordinal))
         {
             throw new ArgumentException("Usage: sourcegen-auditor audit <scenario.json> [options]");
         }
@@ -159,25 +165,46 @@ internal static class Program
         HashSet<string> seen = new(StringComparer.Ordinal);
         for (int index = 2; index < args.Length; index += 2)
         {
-            if (index + 1 >= args.Length || !seen.Add(args[index]))
+            string option = args[index];
+            if (!seen.Add(option))
             {
-                throw new ArgumentException("CLI options are missing values or duplicated.");
+                throw new ArgumentException($"Option '{option}' may only be specified once.");
+            }
+
+            if (index + 1 >= args.Length)
+            {
+                throw new ArgumentException($"Option '{option}' requires a value.");
             }
 
             string value = args[index + 1];
-            switch (args[index])
+            switch (option)
             {
-                case "--format" when value is "console" or "json":
+                case "--format":
+                    if (value is not ("console" or "json"))
+                    {
+                        throw new ArgumentException($"Invalid value '{value}' for --format. Accepted values: console, json.");
+                    }
+
                     format = value;
                     break;
-                case "--output" when value.Length > 0:
+                case "--output":
+                    if (value.Length == 0)
+                    {
+                        throw new ArgumentException("Invalid value for --output. Accepted value: a non-empty file path.");
+                    }
+
                     output = value;
                     break;
-                case "--timeout" when int.TryParse(value, out int parsed) && parsed is >= 1 and <= 600:
+                case "--timeout":
+                    if (!int.TryParse(value, out int parsed) || parsed is < 1 or > 600)
+                    {
+                        throw new ArgumentException($"Invalid value '{value}' for --timeout. Accepted range: 1-600 seconds.");
+                    }
+
                     timeout = parsed;
                     break;
                 default:
-                    throw new ArgumentException($"Unknown or invalid option '{args[index]}'.");
+                    throw new ArgumentException($"Unknown option '{option}'. Accepted options: --format, --output, --timeout.");
             }
         }
 
@@ -187,10 +214,41 @@ internal static class Program
     private static void WriteHelp(TextWriter? writer = null)
     {
         writer ??= Console.Out;
-        writer.WriteLine("SourceGen Auditor audits observed generator behavior under one declared controlled scenario.");
-        writer.WriteLine("Usage: sourcegen-auditor audit <scenario.json> [--format console|json] [--output <path>] [--timeout <seconds>]");
-        writer.WriteLine("       sourcegen-auditor --help");
-        writer.WriteLine("       sourcegen-auditor --version");
+        writer.WriteLine("SourceGen Auditor audits what an incremental generator recomputes and what Roslyn reuses.");
+        writer.WriteLine();
+        writer.WriteLine("Usage:");
+        writer.WriteLine("  sourcegen-auditor audit <scenario.json> [options]");
+        writer.WriteLine("  sourcegen-auditor --help");
+        writer.WriteLine("  sourcegen-auditor --version");
+        writer.WriteLine();
+        writer.WriteLine("Command:");
+        writer.WriteLine("  audit    Audit one selected generator under a declared controlled scenario.");
+        writer.WriteLine();
+        writer.WriteLine("Run 'sourcegen-auditor audit --help' for arguments, options, verdicts, and exit codes.");
+        writer.WriteLine("Every result is bounded to the selected generator, declared scenario, and recorded environment.");
+    }
+
+    private static void WriteAuditHelp()
+    {
+        Console.Out.WriteLine("Audit one selected incremental generator under a declared controlled scenario.");
+        Console.Out.WriteLine();
+        Console.Out.WriteLine("Usage:");
+        Console.Out.WriteLine("  sourcegen-auditor audit <scenario.json> [options]");
+        Console.Out.WriteLine();
+        Console.Out.WriteLine("Argument:");
+        Console.Out.WriteLine("  <scenario.json>       Manifest declaring the generator, inputs, mutation, and expectations.");
+        Console.Out.WriteLine();
+        Console.Out.WriteLine("Options:");
+        Console.Out.WriteLine("  --format <value>      Report format: console or json. Default: console.");
+        Console.Out.WriteLine("  --output <path>       Atomically write the report to a file instead of stdout.");
+        Console.Out.WriteLine("  --timeout <seconds>   Timeout for each worker checkpoint, 1-600. Default: 30.");
+        Console.Out.WriteLine("  -h, --help            Show audit help.");
+        Console.Out.WriteLine();
+        Console.Out.WriteLine("Verdicts: PASS=all required assertions passed; FAIL=complete evidence contradicted an expectation;");
+        Console.Out.WriteLine("          UNKNOWN=required public evidence was unavailable; ERROR=an operational/evidence failure.");
+        Console.Out.WriteLine("Exit codes: 0 PASS, 1 FAIL, 2 UNKNOWN, 3 ERROR, 64 invalid input, 130 canceled.");
+        Console.Out.WriteLine();
+        Console.Out.WriteLine("Generator code runs with your permissions. Worker isolation is not a security sandbox.");
     }
 
     private static SupervisedWorkerResult CreateSkippedTransition(CompatibilityEvidence compatibility)
