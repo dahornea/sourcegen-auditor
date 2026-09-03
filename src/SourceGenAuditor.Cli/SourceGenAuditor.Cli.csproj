@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>sourcegen-auditor</ToolCommandName>
+    <PackageId>SourceGenAuditor.Tool</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>SourceGen Auditor contributors</Authors>
+    <Description>Audits observed incremental source generator behavior under one declared controlled scenario.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../SourceGenAuditor.Core/SourceGenAuditor.Core.csproj" />
+    <InternalsVisibleTo Include="SourceGenAuditor.Tests" />
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+    <None Include="../../THIRD-PARTY-NOTICES.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+  <Target Name="ClearUnreproducibleRepositoryMetadata"
+          AfterTargets="_InitializeNuspecRepositoryInformationProperties"
+          BeforeTargets="GenerateNuspec">
+    <PropertyGroup>
+      <RepositoryUrl></RepositoryUrl>
+      <RepositoryType></RepositoryType>
+      <RepositoryBranch></RepositoryBranch>
+      <RepositoryCommit></RepositoryCommit>
+    </PropertyGroup>
+  </Target>
+</Project>

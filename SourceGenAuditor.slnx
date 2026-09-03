@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SourceGenAuditor.Core/SourceGenAuditor.Core.csproj" />
+    <Project Path="src/SourceGenAuditor.Cli/SourceGenAuditor.Cli.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SourceGenAuditor.Tests/SourceGenAuditor.Tests.csproj" />
+    <Project Path="tests/SourceGenAuditor.Fixtures/SourceGenAuditor.Fixtures.csproj" />
+  </Folder>
+</Solution>

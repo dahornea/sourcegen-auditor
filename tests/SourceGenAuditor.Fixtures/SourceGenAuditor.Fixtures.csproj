@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <NoWarn>$(NoWarn);RS1036;RS2008</NoWarn>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DefineConstants>TRACE</DefineConstants>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+  </ItemGroup>
+  <Target Name="PreparePhase1Scenarios" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <ItemGroup>
+      <_ScenarioSystemRuntime Include="@(ReferencePath)" Condition="'%(Filename)%(Extension)' == 'System.Runtime.dll'" />
+    </ItemGroup>
+    <Error Condition="'@(_ScenarioSystemRuntime)' == ''" Text="System.Runtime reference assembly was not resolved." />
+    <Exec Command="pwsh -NoProfile -File &quot;$(MSBuildProjectDirectory)/../../eng/prepare-scenarios.ps1&quot; -FixturePath &quot;$(TargetPath)&quot; -SystemRuntimePath &quot;@(_ScenarioSystemRuntime)&quot; -RepositoryRoot &quot;$(MSBuildProjectDirectory)/../..&quot;" />
+  </Target>
+</Project>

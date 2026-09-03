@@ -1,0 +1,17 @@
+bin/
+obj/
+TestResults/
+artifacts/
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.nupkg
+*.snupkg
+*.trx
+coverage/
+reports/
+tests/scenarios/*/scenario.json
+tests/scenarios/*/generator/
+tests/scenarios/*/references/
