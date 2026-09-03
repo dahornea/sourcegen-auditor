@@ -1,5 +1,7 @@
 # SourceGen Auditor
 
+[![Release](https://img.shields.io/github/v/release/dahornea/sourcegen-auditor?display_name=tag)](https://github.com/dahornea/sourcegen-auditor/releases/latest) [![License](https://img.shields.io/github/license/dahornea/sourcegen-auditor)](https://github.com/dahornea/sourcegen-auditor/blob/main/LICENSE)
+
 > Audit what your incremental generator recomputes—and what Roslyn reuses.
 
 SourceGen Auditor audits a compiled Roslyn incremental source generator across a controlled A → B → A scenario. It combines exact generated-output comparison with Roslyn tracked-step reasons, exposing cases where output stayed equal but the pipeline still recomputed.
@@ -11,6 +13,8 @@ Use it to:
 - verify irrelevant changes remain cached.
 
 Unlike an ordinary generated-text snapshot test, the audit checks both what the generator produced and what Roslyn reported doing with the registered final output.
+
+**[Download SourceGen Auditor v0.1.0](https://github.com/dahornea/sourcegen-auditor/releases/tag/v0.1.0)**
 
 ## Quick demo
 
@@ -26,7 +30,7 @@ dotnet run --project ./src/SourceGenAuditor.Cli/SourceGenAuditor.Cli.csproj `
   audit ./tests/scenarios/irrelevant/scenario.json
 ```
 
-The Release build materializes the two ignored demonstration manifests and their compiled fixture inputs. A passing irrelevant-change audit includes this summary excerpt:
+The Release build materializes the two ignored demonstration manifests and their compiled fixture inputs. A passing irrelevant-change audit includes this abbreviated excerpt:
 
 ```text
 SourceGen Auditor 0.1.0
@@ -34,12 +38,16 @@ Observed behavior under one declared controlled scenario.
 Verdict: PASS
 Partial evidence: false
 Assertions:
-[PASS] declared-invalidation: Registered final-output reasons match declared relevance. (IRRELEVANT_OUTPUT_CACHED) evidence=[run:mutatedB]
-[PASS] restoration: Restored A matches the transition worker's initial A. (RESTORED_A_MATCHES) evidence=[run:transitionA,run:restoredA]
-[PASS] stable-restored-cache: Every registered final output was cached. (STABLE_OUTPUT_CACHED) evidence=[run:stableA]
+[PASS] cold-output-determinism
+[PASS] declared-source-effect
+[PASS] declared-diagnostic-effect
+[PASS] declared-invalidation
+[PASS] restoration
+[PASS] stable-restored-cache
+... detailed evidence omitted ...
 ```
 
-This is an excerpt; the console report continues with all six assertions and detailed per-run evidence.
+The full console report includes assertion reasons and detailed per-run evidence.
 
 ## What the audit checks
 
@@ -59,7 +67,7 @@ That sequence separates three questions:
 
 The manifest declares whether the mutation is relevant. The tool never infers the author's intent.
 
-## Phase 1 scope and prerequisites
+## Supported scope and requirements
 
 Required:
 
@@ -69,9 +77,41 @@ Required:
 - a compiled C# generator assembly containing one selected `IIncrementalGenerator`;
 - a manifest using the single supported source-text replacement scenario.
 
-Phase 1 supports one generator, one C# compilation, one explicit metadata reference, console and JSON reports, and the pinned Roslyn 5.9.0 host/admission policy. It does not load projects or solutions, infer mutation relevance, exercise multiple generators or languages, benchmark performance, or establish behavior in Visual Studio or `dotnet build`.
+Version 0.1.0 supports one generator, one C# compilation, one explicit metadata reference, console and JSON reports, and the pinned Roslyn 5.9.0 host/admission policy. It does not load projects or solutions, infer mutation relevance, exercise multiple generators or languages, benchmark performance, or establish behavior in Visual Studio or `dotnet build`.
 
-## Build and install locally
+## Install version 0.1.0
+
+The package is not published to NuGet.org. Download `SourceGenAuditor.Tool.0.1.0.nupkg` from the [v0.1.0 release](https://github.com/dahornea/sourcegen-auditor/releases/tag/v0.1.0), or use the [direct package download](https://github.com/dahornea/sourcegen-auditor/releases/download/v0.1.0/SourceGenAuditor.Tool.0.1.0.nupkg).
+
+Expected SHA-256:
+
+```text
+4feb853bfdcfd4db21f21fbf35385588fc0cd8aacc7674dfebb700a4d08cbbfe
+```
+
+From PowerShell in the directory containing the downloaded package, verify and install it as a local tool source:
+
+```powershell
+(Get-FileHash ./SourceGenAuditor.Tool.0.1.0.nupkg -Algorithm SHA256).Hash.ToLowerInvariant()
+
+dotnet tool install SourceGenAuditor.Tool `
+  --version 0.1.0 `
+  --tool-path ./.tools `
+  --add-source .
+
+& ./.tools/sourcegen-auditor.exe --help
+```
+
+Uninstall from the same tool path:
+
+```powershell
+dotnet tool uninstall SourceGenAuditor.Tool --tool-path ./.tools
+```
+
+<details>
+<summary>Build and install from source</summary>
+
+### Local-only source build
 
 `SourceGenAuditor.Tool` 0.1.0 is not published to NuGet.org. Build and install it only from the package produced by this repository:
 
@@ -100,7 +140,7 @@ dotnet tool install SourceGenAuditor.Tool --version 0.1.0 `
 
 The `<clear />` entry makes this a local-only package source rather than a fallback to NuGet.org.
 
-Check the installed command and run either approved scenario:
+Check the installed command and run either included example scenario:
 
 ```powershell
 & ./artifacts/tool/sourcegen-auditor.exe --help
@@ -116,6 +156,8 @@ Uninstall from the same tool path:
 ```powershell
 dotnet tool uninstall SourceGenAuditor.Tool --tool-path ./artifacts/tool
 ```
+
+</details>
 
 ## Scenario manifest
 
